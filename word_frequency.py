@@ -31,7 +31,7 @@ class WordFrequencies(object):
     
     def phrase_frequency(self, phrase):
         # type: (str) -> int
-        return len((" " + self.text + " ").split(phrase)) - 1
+        return len(self.text.split(phrase)) - 1 + int(self.text.startswith(phrase)) + int(self.text.endswith(phrase))
     
     def words_frequency(self, words):
         # type: (List[str]) -> int
