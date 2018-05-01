@@ -8,7 +8,20 @@ from __future__ import print_function
 import re
 from collections import Counter
 
+from functools import reduce
+
 from typing import List, Tuple
+
+
+# Polyfills using reduce
+
+def sum(iterable):
+    return reduce(lambda a, b: a + 1, iterable, 0)
+
+
+def max(*args, **kwargs):
+    key = kwargs.get("key", lambda x: x)
+    return reduce(lambda a, b: a if key(a) > key(b) else b, args)
 
 
 class WordFrequencies(object):
@@ -47,7 +60,7 @@ def test():
     word_frequencies = WordFrequencies()
     map(print, word_frequencies.frequency_order())
     print(word_frequencies.most_common_word())
-    print(re.split("[ \n\r\t.,;:?!\"/\\\{}[\\]()]*", "  hello   world "))
+    # print(re.split("[ \n\r\t.,;:?!\"/\\\{}[\\]()]*", "  hello   world "))
     print(word_frequencies.phrase_frequency("Project Gutenberg"))
 
 
