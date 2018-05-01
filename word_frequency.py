@@ -8,7 +8,7 @@ from __future__ import print_function
 import re
 from collections import Counter
 
-from typing import List
+from typing import List, Tuple
 
 
 class WordFrequencies(object):
@@ -16,8 +16,9 @@ class WordFrequencies(object):
     def __init__(self, path="Dante's Inferno.txt"):
         # type: (str) -> None
         self.text = open(path).read()  # type: str
-        # TODO check regex
-        self.words = re.split("//S+", self.text)  # type: List[str]
+        # blacklist = "[ \n\r\t.,;:?!\"/\\\{}[\\]()]*"
+        whitelist = "[a-zA-Z-]+"
+        self.words = re.findall(whitelist, self.text.lower())  # type: List[str]
         self.word_frequencies = Counter(self.words)  # type: Counter[str]
         self.num_words = len(self.words)  # type: int
     
@@ -31,16 +32,23 @@ class WordFrequencies(object):
     
     def phrase_frequency(self, phrase):
         # type: (str) -> int
-        return len(self.text.split(phrase)) - 1 + int(self.text.startswith(phrase)) + int(self.text.endswith(phrase))
+        return sum(1 for _ in re.finditer(phrase, self.text))
     
     def words_frequency(self, words):
         # type: (List[str]) -> int
         return sum(self.word_frequencies[word] for word in words)
+    
+    def frequency_order(self, reverse=False):
+        # type: () -> List[Tuple[str, int]]
+        return sorted(self.word_frequencies.viewitems(), key=lambda x: x[1], reverse=reverse)
 
 
 def test():
     word_frequencies = WordFrequencies()
+    map(print, word_frequencies.frequency_order())
     print(word_frequencies.most_common_word())
+    print(re.split("[ \n\r\t.,;:?!\"/\\\{}[\\]()]*", "  hello   world "))
+    print(word_frequencies.phrase_frequency("Project Gutenberg"))
 
 
 if __name__ == '__main__':
